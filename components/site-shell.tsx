@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { type ReactNode } from "react";
 
 import { useLanguage, type Language } from "@/lib/language";
@@ -16,7 +17,7 @@ const shellCopy = {
       contact: "Contact",
     },
     subscribe: "Subscribe",
-    edition: "Odisha Edition",
+    edition: "",
     footer: {
       location: "© 2026 Paribesh Prahari · Baripada, Odisha",
       facebook: "Facebook",
@@ -46,22 +47,37 @@ const shellCopy = {
 export function SiteShell({ children }: { children: ReactNode }) {
   const { language, setLanguage } = useLanguage();
   const copy = shellCopy[language];
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === "/" && pathname === "/") return true;
+    if (path !== "/" && pathname.startsWith(path)) return true;
+    return false;
+  };
+
+  const navItems = [
+    { name: copy.nav.home, path: "/" },
+    { name: copy.nav.about, path: "/about" },
+    { name: copy.nav.editorial, path: "/editorial" },
+    { name: copy.nav.news, path: "/in-the-news" },
+    { name: copy.nav.contact, path: "/contact" },
+  ];
 
   return (
     <>
       <header className="bg-[#f6f4ea] text-black">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-8 flex justify-between items-center py-4">
-          <Link href="/" className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Paribesh Prahari Logo" width={40} height={40} className="w-10 h-10 object-contain" />
-            <strong className="text-2xl font-sans tracking-tight">Paribesh Prahari</strong>
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-8 flex justify-between items-center py-3 md:py-4">
+          <Link href="/" className="flex items-center gap-2 md:gap-3">
+            <Image src="/logo.png" alt="Paribesh Prahari Logo" width={32} height={32} className="w-8 h-8 md:w-10 md:h-10 object-contain" />
+            <strong className="text-lg md:text-2xl font-sans tracking-tight">Paribesh Prahari</strong>
           </Link>
 
-          <div className="flex items-center gap-4">
-            <div className="hidden md:inline-flex items-center rounded-full border border-zinc-300 p-1 text-xs font-semibold tracking-wider">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="inline-flex items-center rounded-full border border-zinc-300 p-0.5 md:p-1 text-[10px] md:text-xs font-semibold tracking-wider">
               <button
                 type="button"
                 onClick={() => setLanguage("en")}
-                className={`rounded-full px-3 py-1 transition-colors ${
+                className={`rounded-full px-2 md:px-3 py-0.5 md:py-1 transition-colors ${
                   language === "en" ? "bg-[#124e27] text-white" : "text-zinc-700 hover:bg-zinc-100"
                 }`}
               >
@@ -70,7 +86,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               <button
                 type="button"
                 onClick={() => setLanguage("or")}
-                className={`rounded-full px-3 py-1 transition-colors ${
+                className={`rounded-full px-2 md:px-3 py-0.5 md:py-1 transition-colors ${
                   language === "or" ? "bg-[#124e27] text-white" : "text-zinc-700 hover:bg-zinc-100"
                 }`}
               >
@@ -78,7 +94,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
               </button>
             </div>
 
-            <button className="bg-[#c10008] text-white px-4 py-1.5 rounded-sm hover:bg-red-800 transition-colors">
+            <button className="bg-[#c10008] text-white px-3 md:px-4 py-1 md:py-1.5 rounded-sm hover:bg-red-800 transition-colors text-xs md:text-sm font-semibold">
               {copy.subscribe}
             </button>
           </div>
@@ -86,13 +102,21 @@ export function SiteShell({ children }: { children: ReactNode }) {
       </header>
 
       <div className="bg-[#124e27] text-white sticky top-0 z-20 shadow-sm">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-8 py-3 flex items-center justify-between overflow-x-auto">
-          <nav className="flex items-center gap-6 text-sm font-semibold whitespace-nowrap">
-            <Link href="/" className="hover:text-green-200 transition-colors">{copy.nav.home}</Link>
-            <Link href="/about" className="hover:text-green-200 transition-colors">{copy.nav.about}</Link>
-            <Link href="/editorial" className="hover:text-green-200 transition-colors">{copy.nav.editorial}</Link>
-            <Link href="/in-the-news" className="hover:text-green-200 transition-colors">{copy.nav.news}</Link>
-            <Link href="/contact" className="hover:text-green-200 transition-colors">{copy.nav.contact}</Link>
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-8 py-3 flex items-center justify-between overflow-x-auto scrollbar-hide">
+          <nav className="flex items-center gap-5 md:gap-6 text-sm font-semibold whitespace-nowrap">
+            {navItems.map((item) => (
+              <Link 
+                key={item.path} 
+                href={item.path} 
+                className={`transition-colors duration-200 ${
+                  isActive(item.path) 
+                    ? "text-white opacity-100" 
+                    : "text-white/80 hover:text-white hover:opacity-100"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
           <div className="hidden md:block text-xs font-medium text-green-100 opacity-80">
             {copy.edition}
@@ -100,7 +124,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      <main className="flex-1 max-w-[1280px] mx-auto w-full px-4 lg:px-8 pt-8 pb-0 border-x border-zinc-200 bg-white">
+      <main className="flex-1 max-w-[1280px] mx-auto w-full px-4 lg:px-8 pt-8 pb-0 border-x border-zinc-200 bg-white min-h-screen">
         {children}
       </main>
 

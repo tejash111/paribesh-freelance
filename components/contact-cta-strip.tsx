@@ -20,7 +20,7 @@ export function ContactCtaStrip() {
   const copy = contactCtaCopy[language];
 
   return (
-    <section className="border-t border-zinc-200 py-8">
+    <section className="border-t border-zinc-200 py-8 -mx-4 lg:-mx-8 px-4 lg:px-8">
       <div className="flex flex-col gap-3 rounded-sm bg-[#9ee970] px-6 py-6 text-zinc-950 md:flex-row md:items-center md:justify-between md:px-8">
         <h2 className="text-2xl font-semibold leading-tight md:text-3xl">
           {copy.title}

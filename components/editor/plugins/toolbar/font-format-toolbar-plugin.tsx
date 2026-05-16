@@ -57,7 +57,7 @@ export function FontFormatToolbarPlugin() {
     <ToggleGroup
       type="multiple"
       value={activeFormats}
-      onValueChange={setActiveFormats}
+      onValueChange={(val: any) => setActiveFormats(Array.isArray(val) ? val : [val])}
       variant="outline"
       size="sm"
     >

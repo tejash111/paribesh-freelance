@@ -31,6 +31,8 @@ export async function GET(req: Request) {
   const language = searchParams.get("language");
   const slug = searchParams.get("slug");
   const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const skip = (page - 1) * limit;
 
   const query: PostQuery = { status: "PUBLISHED" };
   if (type && isPostType(type)) query.type = type;
@@ -38,8 +40,20 @@ export async function GET(req: Request) {
   if (language && isPostLanguage(language)) query.language = language;
   if (slug) query.slug = slug;
 
-  const posts = await Post.find(query).sort({ publishedAt: -1 }).limit(limit).lean();
-  return NextResponse.json({ posts });
+  const [posts, total] = await Promise.all([
+    Post.find(query).sort({ publishedAt: -1 }).skip(skip).limit(limit).lean(),
+    Post.countDocuments(query)
+  ]);
+
+  return NextResponse.json({ 
+    posts, 
+    pagination: {
+      total,
+      page,
+      limit,
+      pages: Math.ceil(total / limit)
+    }
+  });
 }
 
 export async function POST(req: Request) {

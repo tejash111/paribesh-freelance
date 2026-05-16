@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const MONGODB_URI =
   process.env.MONGODB_URI ||
   process.env.MONGO_URI ||
-  "mongodb://127.0.0.1:27017/paribesh-prahari";
+  "mongodb+srv://tejashsinghrajput_db_user:33ZVT4Ti5dCKXH9R@cluster0.z2pxjus.mongodb.net/paribesh-prahari";
 
 type MongooseCache = {
   conn: typeof mongoose | null;
